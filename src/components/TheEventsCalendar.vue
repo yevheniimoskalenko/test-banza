@@ -7,7 +7,7 @@
   import useApi from "../api/index";
 
   const { types } = useMain();
-
+  const weeks = ref(['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'])
   const {
     daysInMonth,
     previousHandler,
@@ -75,44 +75,48 @@
                 required
                 v-model="type"></v-select>
     </header>
-    <main>
-      <table>
-        <thead>
-          <tr>
-            <th>Пн</th>
-            <th>Вт</th>
-            <th>Ср</th>
-            <th>Чт</th>
-            <th>Пт</th>
-            <th>Сб</th>
-            <th>Нд</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(week, weekIndex) in filteredData"
-              :key="weekIndex">
-            <td v-for="(day, dayIndex) in week"
-                :key="day.date">
-              <div v-if="day.date || (weekIndex === 0 && dayIndex >= firstDayOfWeek())">
-                <template v-if="day.date">
-                  {{ date.format(new Date(day.date), "dayOfMonth") }}
-                  <div class=" d-flex flex-column">
-                    <template v-for="(event, eventIndex) in day.events" :key="eventIndex">
-                    <v-chip
-                          v-if="event.name"
-                          :color="event.categoryId === types[1].categoryId ? 'yellow': null">
-                      <span :class="event.categoryId !== types[1].categoryId ? 'font-weight-black' : null">{{ event.name }}</span>
-                      <span v-if="event.categoryId !== types[1].categoryId">*</span>
-                    </v-chip>
-                    </template>
-                  </div>
-                </template>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </main>
-    <footer><v-btn @click="dialog = !dialog">Створити подію</v-btn></footer>
+<main>
+  <div class="calendar">
+    <div v-for="(week, index) in weeks" :key="index">
+      {{ week }}
+    </div>
+  </div>
+  <div class="calendar" v-for="(week, weekIndex) in filteredData" :key="weekIndex">
+    <div v-for="(day, dayIndex) in week" :key="dayIndex">
+      <template v-if="day">
+        <div>
+          {{ date.format(new Date(day.date), "dayOfMonth") }}
+          <div class="d-flex flex-column">
+            <template v-for="(event, eventIndex) in day.events" :key="eventIndex">
+              <v-chip
+                v-if="event.name"
+                :color="event.categoryId === types[1].categoryId ? 'yellow' : null"
+              >
+                <span
+                  :class="event.categoryId !== types[1].categoryId ? 'font-weight-black' : null"
+                  >{{ event.name }}</span
+                >
+                <span v-if="event.categoryId !== types[1].categoryId">*</span>
+              </v-chip>
+            </template>
+          </div>
+        </div>
+      </template>
+      <template v-else>
+        <div>&nbsp;</div>
+      </template>
+    </div>
+  </div>
+</main>
+    <footer><v-btn @click="dialog = !dialog"
+            class=" w-100 mt-10">Створити подію</v-btn></footer>
   </section>
 </template>
+<style>
+  .calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    column-gap: 20px;
+    row-gap: 20px;
+  }
+</style>

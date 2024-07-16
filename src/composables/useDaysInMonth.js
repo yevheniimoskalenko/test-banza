@@ -38,6 +38,9 @@ export function useDaysInMonth() {
     return lastDayOfMonth.getDay();
   };
 
+
+
+  
   const daysInMonth = (events = []) => {
     const currentMonth = ref(currentDate.value.getMonth());
     const currentYear = ref(currentDate.value.getFullYear());
@@ -58,19 +61,21 @@ export function useDaysInMonth() {
         events: [],
       };
 
-      // Додаємо події до дня
-      events.forEach((event) => {
-        const startDate = new Date(event.startDate);
-        const endDate = new Date(event.endDate);
-        if (date.isWithinRange(currentDateNew, [startDate, endDate])) {
-          day.events.push({
-            id: event.id,
-            ...event,
-            startDate,
-            endDate,
-          });
-        }
-      });
+      if (events.length) {
+        // Додаємо події до дня
+        events.forEach((event) => {
+          const startDate = new Date(event.startDate);
+          const endDate = new Date(event.endDate);
+          if (date.isWithinRange(currentDateNew, [startDate, endDate])) {
+            day.events.push({
+              id: event.id,
+              ...event,
+              startDate,
+              endDate,
+            });
+          }
+        });
+      }
 
       week.push(day);
       if (week.length === 7 || currentDateNew.getDay() === 0) {
